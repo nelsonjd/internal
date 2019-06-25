@@ -31,16 +31,31 @@ class LoginFormState extends State<LoginForm> {
 
 class UserNameFormField extends FormField<String> {
   UserNameFormField({
-    String initialValue = "hi",
     bool autovalidate = false,
   }) : super (
-    initialValue: initialValue,
     autovalidate: autovalidate,
     builder: (FormFieldState<String> state) {
       return TextField(
         decoration: InputDecoration(
-          border: OutlineInputBorder(),
+          filled: true,
           labelText: 'Robinhood Username',
+        ),
+      );
+    }
+  );
+}
+
+
+class PasswordFormField extends FormField<String> {
+  PasswordFormField({
+    bool autovalidate = false,
+  }) : super(
+    autovalidate: autovalidate,
+    builder: (FormFieldState<String> state) {
+      return TextField(
+        decoration: InputDecoration(
+          filled: true,
+          labelText: 'Robinhood Password',
         ),
       );
     }
