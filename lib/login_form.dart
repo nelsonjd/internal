@@ -16,48 +16,53 @@ class LoginFormState extends State<LoginForm> {
     // TODO: implement build
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: ListView(
         children: <Widget>[
-          UserNameFormField(
-
+          SizedBox(height: 60.0),
+          Text('Welcome to Internal®.'),
+          Text(
+            'We never store your credentials on our servers. It is sent using encrypted protocols.'),
+          SizedBox(height: 15.0),
+          TextFormField(
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Cannot be empty';
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              filled: true,
+              labelText: 'Robinhood Username',
+            ),
+          ),
+          SizedBox(height: 15.0),
+          TextFormField(
+            obscureText: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Cannot be empty';
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              filled: true,
+              labelText: 'Robinhood Password',
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: RaisedButton(
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('processing data')));
+                }
+              },
+              child: Text('Send To Robinhood')
+            ),
           )
         ],
-      ),
+      )
     );
   }
 }
 
-
-class UserNameFormField extends FormField<String> {
-  UserNameFormField({
-    bool autovalidate = false,
-  }) : super (
-    autovalidate: autovalidate,
-    builder: (FormFieldState<String> state) {
-      return TextField(
-        decoration: InputDecoration(
-          filled: true,
-          labelText: 'Robinhood Username',
-        ),
-      );
-    }
-  );
-}
-
-
-class PasswordFormField extends FormField<String> {
-  PasswordFormField({
-    bool autovalidate = false,
-  }) : super(
-    autovalidate: autovalidate,
-    builder: (FormFieldState<String> state) {
-      return TextField(
-        decoration: InputDecoration(
-          filled: true,
-          labelText: 'Robinhood Password',
-        ),
-      );
-    }
-  );
-}
