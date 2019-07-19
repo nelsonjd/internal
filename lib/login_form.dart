@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LoginForm extends StatefulWidget {
   @override
@@ -56,6 +57,24 @@ class LoginFormState extends State<LoginForm> {
                 if (_formKey.currentState.validate()) {
                   Scaffold.of(context).showSnackBar(SnackBar(content: Text('processing data')));
                 }
+
+                var future = http.get('https://robinhood.com/login');
+                future.then((response) {
+                  var str = response.body;
+
+                  RegExp exp = new RegExp(
+                    r'clientId: \"([0-9a-z-]+)\"',
+                    caseSensitive: true,
+                  );
+
+                  var match = exp.firstMatch(str);
+                  var deviceToken = match.group(1);
+                  return deviceToken;
+
+                }).then((deviceToken) {
+
+                });
+
               },
               child: Text('Send To Robinhood')
             ),
