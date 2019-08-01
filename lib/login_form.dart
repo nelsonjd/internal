@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'robinhood_login_flow.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -11,6 +11,17 @@ class LoginForm extends StatefulWidget {
 
 class LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
+
+  final usernameCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    // clean up the controller when the widget is disposed.
+    usernameCtrl.dispose();
+    passwordCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +36,7 @@ class LoginFormState extends State<LoginForm> {
             'We never store your credentials on our servers. It is sent using encrypted protocols.'),
           SizedBox(height: 15.0),
           TextFormField(
+            controller: usernameCtrl,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Cannot be empty';
@@ -38,6 +50,7 @@ class LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 15.0),
           TextFormField(
+            controller: passwordCtrl,
             obscureText: true,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -58,22 +71,13 @@ class LoginFormState extends State<LoginForm> {
                   Scaffold.of(context).showSnackBar(SnackBar(content: Text('processing data')));
                 }
 
-                var future = http.get('https://robinhood.com/login');
-                future.then((response) {
-                  var str = response.body;
+                var username = usernameCtrl.text;
+                var password = passwordCtrl.text;
 
-                  RegExp exp = new RegExp(
-                    r'clientId: \"([0-9a-z-]+)\"',
-                    caseSensitive: true,
-                  );
-
-                  var match = exp.firstMatch(str);
-                  var deviceToken = match.group(1);
-                  return deviceToken;
-
-                }).then((deviceToken) {
-
-                });
+                var future = new RobinhoodLoginFlow(
+                  username: username,
+                  password: password
+                ).initiate();
 
               },
               child: Text('Send To Robinhood')
