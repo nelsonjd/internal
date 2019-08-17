@@ -1,15 +1,16 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'robinhood_login_flow.dart';
+import 'robinhood_challenge_route.dart';
 
-class LoginForm extends StatefulWidget {
+class RobinhoodLoginForm extends StatefulWidget {
   @override
-  LoginFormState createState() {
-    return LoginFormState();
+  RobinhoodLoginFormState createState() {
+    return RobinhoodLoginFormState();
   }
 }
 
-class LoginFormState extends State<LoginForm> {
+class RobinhoodLoginFormState extends State<RobinhoodLoginForm> {
   final _formKey = GlobalKey<FormState>();
 
   final usernameCtrl = TextEditingController();
@@ -74,11 +75,18 @@ class LoginFormState extends State<LoginForm> {
                 var username = usernameCtrl.text;
                 var password = passwordCtrl.text;
 
-                var future = new RobinhoodLoginFlow(
+                var flow = new RobinhoodLoginFlow(
                   username: username,
                   password: password
-                ).initiate();
+                );
 
+                flow.initiate().then((value) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => RobinhoodChallengeRoute())
+                  );
+                  return Future.value(1);
+                });
               },
               child: Text('Send To Robinhood')
             ),

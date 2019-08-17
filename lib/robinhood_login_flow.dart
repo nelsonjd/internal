@@ -33,7 +33,7 @@ class RobinhoodLoginFlow {
 
   initiate()
   {
-    this.deviceTokenFuture()
+    return this.deviceTokenFuture()
       .then(this.initialChallengeFuture)
       .then(this.secondaryChallengeFuture);
   }
@@ -65,12 +65,9 @@ class RobinhoodLoginFlow {
 
     this.body['device_token'] = this.deviceToken;
     this.body['username'] = this.username;
-    this.body['password'] = 'ljsldkjflsdjfklsdjf';
+    this.body['password'] = this.password;
 
     var encodedBody = jsonEncode(body);
-
-    print(encodedBody);
-
 
     var future = http.post(
       this.oauthUrl,
@@ -79,7 +76,6 @@ class RobinhoodLoginFlow {
     );
 
     return future.then((response) {
-      print(response.body);
       if (response.statusCode == 400) {
         return response.statusCode;
       }
