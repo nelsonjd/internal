@@ -1,11 +1,16 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:internal/robinhood_login_flow.dart';
 
 class RobinhoodChallengeForm extends StatefulWidget {
 
+  RobinhoodLoginFlow flow;
+
+  RobinhoodChallengeForm({this.flow});
+
   @override
   RobinhoodChallengeFormState createState() {
-    return RobinhoodChallengeFormState();
+    return RobinhoodChallengeFormState(flow: this.flow);
   }
 }
 
@@ -14,6 +19,10 @@ class RobinhoodChallengeFormState extends State<RobinhoodChallengeForm> {
   final _formKey = GlobalKey<FormState>();
 
   final challengeCodeCtrl = TextEditingController();
+
+  RobinhoodLoginFlow flow;
+
+  RobinhoodChallengeFormState({this.flow});
 
   @override
   void dispose() {
@@ -50,10 +59,9 @@ class RobinhoodChallengeFormState extends State<RobinhoodChallengeForm> {
                     SnackBar(content: Text('processing data')));
                 }
 
-                var challengeCode = challengeCodeCtrl.text;
+                var code = challengeCodeCtrl.text;
 
-                print(challengeCode);
-
+                this.flow.provideCodeFromRobinhood(code);
 
 
               },

@@ -83,7 +83,7 @@ class RobinhoodLoginFormState extends State<RobinhoodLoginForm> {
                 flow.initiate().then((value) {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => RobinhoodChallengeRoute())
+                    MaterialPageRoute(builder: (context) => RobinhoodChallengeRoute(flow: flow))
                   );
                   return Future.value(1);
                 });

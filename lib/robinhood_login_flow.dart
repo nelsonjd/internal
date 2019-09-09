@@ -6,6 +6,7 @@ class RobinhoodLoginFlow {
   String urlToScrubDeviceToken = 'https://robinhood.com/login';
   String oauthUrl = 'https://api.robinhood.com/oauth2/token/';
   String clientId = 'c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS';
+  String challengeId = '';
 
   Map<String, dynamic> body;
   Map<String, String> headers;
@@ -28,14 +29,22 @@ class RobinhoodLoginFlow {
       'Accept': 'application/json',
       'X-Robinhood-API-Version': '1.280.0'
     };
-
   }
 
   initiate()
   {
     return this.deviceTokenFuture()
-      .then(this.initialChallengeFuture)
-      .then(this.secondaryChallengeFuture);
+      .then(this.oAuth1Future)
+      .then(this.oAuth2Future);
+  }
+
+  provideCodeFromRobinhood(String code)
+  {
+    if (challengeId.isEmpty) {
+      throw "there is no challenge id";
+    }
+
+    return this.challengeFuture(code);
   }
 
 
@@ -61,7 +70,7 @@ class RobinhoodLoginFlow {
   }
 
 
-  Future<int> initialChallengeFuture(deviceToken) {
+  Future<int> oAuth1Future(deviceToken) {
 
     this.body['device_token'] = this.deviceToken;
     this.body['username'] = this.username;
@@ -76,17 +85,12 @@ class RobinhoodLoginFlow {
     );
 
     return future.then((response) {
-      if (response.statusCode == 400) {
-        return response.statusCode;
-      }
-      else {
-        throw 0;
-      }
+      return response.statusCode;
     });
   }
 
   
-  Future<dynamic> secondaryChallengeFuture(int i) {
+  Future<dynamic> oAuth2Future(int i) {
 
     this.body['challenge_type'] = 'sms';
 
@@ -99,15 +103,35 @@ class RobinhoodLoginFlow {
     );
 
     return future.then((response) {
-      print(response.body);
-      if (response.statusCode == 400) {
-        return response.statusCode;
-      }
-      else {
-        throw 0;
-      }
-    });
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
 
+      this.challengeId = responseMap['challenge']['id'];
+
+      return response.statusCode;
+    });
+  }
+
+
+  Future<int> challengeFuture(String code) {
+    String url = 'https://api.robinhood.com/challenge/'
+      + challengeId + '/respond/';
+
+    var body = {
+      'response': code
+    };
+
+    var encodedBody = jsonEncode(body);
+
+    var future = http.post(
+      url,
+      headers: this.headers,
+      body: encodedBody
+    );
+
+    return future.then((response) {
+      print(response.body);
+      return response.statusCode;
+    });
   }
 }
 
